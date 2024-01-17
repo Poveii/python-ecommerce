@@ -1,5 +1,7 @@
 # python-ecommerce
 
+Um projeto feito em pouco tempo para aprender o básico de Python construindo uma API de um ecommerce.
+
 ## Instruções
 
 1. Instale as dependências
