@@ -16,7 +16,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
 
-
+# Rota para adicionar um produto
 @app.route('/api/products/add', methods=["POST"])
 def add_product():
     data = request.json
@@ -28,6 +28,7 @@ def add_product():
     return jsonify({ "message": "Invalid product data" }), 400
 
 
+# Rota para deletar um produto
 @app.route('/api/products/delete/<int:product_id>', methods=["DELETE"])
 def delete_product(product_id):
     product = Product.query.get(product_id)
