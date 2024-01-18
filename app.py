@@ -51,6 +51,27 @@ def get_product_details(product_id):
         })
     return jsonify({ "message": "Product not found" }), 404
 
+
+@app.route('/api/products/update/<int:product_id>', methods=['PUT'])
+def update_product(product_id):
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({ "message": "Product not found" }), 404
+
+    data = request.json
+    if 'name' in data:
+        product.name = data['name']
+
+    if 'price' in data:
+        product.price = data['price']
+
+    if 'description' in data:
+        product.description = data['description']
+
+    db.session.commit()
+    return jsonify({ "message": "Product updated successfully" })
+
+
 # Definição de uma rota raiz (página inicial) e da função que será executada ao request.
 @app.route('/teste')
 def hello_world():
