@@ -163,6 +163,30 @@ def remove_from_cart(product_id):
 
     return jsonify({ "message": "Failed to remove item from the cart" }), 400
 
+@app.route('/api/cart', methods=['GET'])
+@login_required
+def view_cart():
+    # Usuário
+    user = User.query.get(int(current_user.id))
+
+    if not user:
+        return jsonify({ "message": "Unauthorized. User not logged in" })
+
+    cart_items = user.cart
+
+    cart_content = []
+    for cart_item in cart_items:
+        product = Product.query.get(cart_item.product_id)
+        cart_content.append({
+            "id": cart_item.id,
+            "user_id": cart_item.user.id,
+            "product_id": cart_item.product_id,
+            "product_name": product.name,
+            "product_price": product.price
+        })
+
+    return jsonify(cart_content)
+
 # Definição de uma rota raiz (página inicial) e da função que será executada ao request.
 @app.route('/teste')
 def hello_world():
