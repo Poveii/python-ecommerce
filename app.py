@@ -169,9 +169,6 @@ def view_cart():
     # Usuário
     user = User.query.get(int(current_user.id))
 
-    if not user:
-        return jsonify({ "message": "Unauthorized. User not logged in" })
-
     cart_items = user.cart
 
     cart_content = []
