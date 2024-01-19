@@ -1,20 +1,21 @@
 # Importações
 ## (É ao contrário do JavaScript kkkkkkk)
-from flask import Flask, request, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'minha_chave_123'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
+app.config['SECRET_KEY'] = "minha_chave_123"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///ecommerce.db"
 
 login_manager = LoginManager()
 
 db = SQLAlchemy(app)
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = "login"
 CORS(app)
+
 
 # Modelagem
 # Usuário (id, username, password)
@@ -36,6 +37,7 @@ class CartItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
+
 
 # Autenticação
 @login_manager.user_loader
@@ -62,6 +64,8 @@ def logout():
     logout_user()
     return jsonify({ "message": "Logout successfully" })
 
+
+# Produtos
 # Rota para adicionar um produto
 @app.route('/api/products/add', methods=["POST"])
 @login_required
@@ -73,7 +77,6 @@ def add_product():
         db.session.commit()
         return jsonify({ "message": "Product added successfully" }), 201
     return jsonify({ "message": "Invalid product data" }), 400
-
 
 # Rota para deletar um produto
 @app.route('/api/products/delete/<int:product_id>', methods=["DELETE"])
@@ -87,7 +90,7 @@ def delete_product(product_id):
     return jsonify({ "message": "Product not found" }), 404
 
 # Rota para listar os detalhes de um produto em específico
-@app.route('/api/products/<int:product_id>', methods=['GET'])
+@app.route('/api/products/<int:product_id>', methods=["GET"])
 def get_product_details(product_id):
     product = Product.query.get(product_id)
     if product:
@@ -100,7 +103,7 @@ def get_product_details(product_id):
     return jsonify({ "message": "Product not found" }), 404
 
 # Rota para atualizar um produto
-@app.route('/api/products/update/<int:product_id>', methods=['PUT'])
+@app.route('/api/products/update/<int:product_id>', methods=["PUT"])
 @login_required
 def update_product(product_id):
     product = Product.query.get(product_id)
@@ -109,19 +112,19 @@ def update_product(product_id):
 
     data = request.json
     if 'name' in data:
-        product.name = data['name']
+        product.name = data["name"]
 
     if 'price' in data:
-        product.price = data['price']
+        product.price = data["price"]
 
     if 'description' in data:
-        product.description = data['description']
+        product.description = data["description"]
 
     db.session.commit()
     return jsonify({ "message": "Product updated successfully" })
 
 # Rota para listar todos os produtos
-@app.route('/api/products', methods=['GET'])
+@app.route('/api/products', methods=["GET"])
 def get_products():
     products = Product.query.all()
     product_list = []
@@ -135,9 +138,10 @@ def get_products():
 
     return jsonify(product_list)
 
+
 # Checkout
 # Rota para adicionar um item ao carrinho
-@app.route('/api/cart/add/<int:product_id>', methods=['POST'])
+@app.route('/api/cart/add/<int:product_id>', methods=["POST"])
 @login_required
 def add_to_cart(product_id):
     # Tem que ter Usuário
@@ -154,7 +158,7 @@ def add_to_cart(product_id):
     return jsonify({ "message": "Failed to add item to the cart" }), 400
 
 # Rota para remover um item do carrinho
-@app.route('/api/cart/remove/<int:product_id>', methods=['DELETE'])
+@app.route('/api/cart/remove/<int:product_id>', methods=["DELETE"])
 @login_required
 def remove_from_cart(product_id):
     # Produto, Usuário = Item do Carrinho
@@ -168,7 +172,7 @@ def remove_from_cart(product_id):
     return jsonify({ "message": "Failed to remove item from the cart" }), 400
 
 # Rota para listar todos os itens do carrinho do usuário logado
-@app.route('/api/cart', methods=['GET'])
+@app.route('/api/cart', methods=["GET"])
 @login_required
 def view_cart():
     # Usuário
@@ -190,7 +194,7 @@ def view_cart():
     return jsonify(cart_content)
 
 # Rota para fazer o checkout e limpar o carrinho
-@app.route('/api/cart/checkout', methods=['POST'])
+@app.route('/api/cart/checkout', methods=["POST"])
 @login_required
 def checkout():
     user = User.query.get(int(current_user.id))
