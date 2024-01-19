@@ -1,5 +1,5 @@
 # Importações
-## É ao contrário do JavaScript kkkkkkk
+## (É ao contrário do JavaScript kkkkkkk)
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -31,6 +31,7 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
 
+# Item do Carrinho (id, user_id, product_id)
 class CartItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -41,6 +42,7 @@ class CartItem(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+# Rota para fazer login do usuário
 @app.route('/login', methods=["POST"])
 def login():
     data = request.json
@@ -53,7 +55,7 @@ def login():
 
     return jsonify({ "message": "Unauthorized. Invalid credentials" }), 401
 
-
+# Rota para fazer logout do usuário
 @app.route('/logout', methods=["POST"])
 @login_required
 def logout():
@@ -84,7 +86,7 @@ def delete_product(product_id):
         return jsonify({ "message": "Product deleted successfully" })
     return jsonify({ "message": "Product not found" }), 404
 
-
+# Rota para listar os detalhes de um produto em específico
 @app.route('/api/products/<int:product_id>', methods=['GET'])
 def get_product_details(product_id):
     product = Product.query.get(product_id)
@@ -97,7 +99,7 @@ def get_product_details(product_id):
         })
     return jsonify({ "message": "Product not found" }), 404
 
-
+# Rota para atualizar um produto
 @app.route('/api/products/update/<int:product_id>', methods=['PUT'])
 @login_required
 def update_product(product_id):
@@ -118,7 +120,7 @@ def update_product(product_id):
     db.session.commit()
     return jsonify({ "message": "Product updated successfully" })
 
-
+# Rota para listar todos os produtos
 @app.route('/api/products', methods=['GET'])
 def get_products():
     products = Product.query.all()
@@ -134,6 +136,7 @@ def get_products():
     return jsonify(product_list)
 
 # Checkout
+# Rota para adicionar um item ao carrinho
 @app.route('/api/cart/add/<int:product_id>', methods=['POST'])
 @login_required
 def add_to_cart(product_id):
@@ -150,6 +153,7 @@ def add_to_cart(product_id):
 
     return jsonify({ "message": "Failed to add item to the cart" }), 400
 
+# Rota para remover um item do carrinho
 @app.route('/api/cart/remove/<int:product_id>', methods=['DELETE'])
 @login_required
 def remove_from_cart(product_id):
@@ -163,6 +167,7 @@ def remove_from_cart(product_id):
 
     return jsonify({ "message": "Failed to remove item from the cart" }), 400
 
+# Rota para listar todos os itens do carrinho do usuário logado
 @app.route('/api/cart', methods=['GET'])
 @login_required
 def view_cart():
@@ -184,6 +189,7 @@ def view_cart():
 
     return jsonify(cart_content)
 
+# Rota para fazer o checkout e limpar o carrinho
 @app.route('/api/cart/checkout', methods=['POST'])
 @login_required
 def checkout():
