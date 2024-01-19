@@ -187,6 +187,17 @@ def view_cart():
 
     return jsonify(cart_content)
 
+@app.route('/api/cart/checkout', methods=['POST'])
+@login_required
+def checkout():
+    user = User.query.get(int(current_user.id))
+
+    cart_items = user.cart
+    for cart_item in cart_items:
+        db.session.delete(cart_item)
+    db.session.commit()
+    return jsonify({ "message": "Checkout successful. Cart has been cleared." })
+
 # Definição de uma rota raiz (página inicial) e da função que será executada ao request.
 @app.route('/teste')
 def hello_world():
