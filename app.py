@@ -22,7 +22,7 @@ CORS(app)
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False, unique=True)
-    password = db.Column(db.String(80), nullable=True)
+    password = db.Column(db.String(80), nullable=False)
     cart = db.relationship('CartItem', backref='user', lazy=True)
 
 # Produto (id, name, price, description)
@@ -206,7 +206,7 @@ def checkout():
     return jsonify({ "message": "Checkout successful. Cart has been cleared." })
 
 # Definição de uma rota raiz (página inicial) e da função que será executada ao request.
-@app.route('/teste')
+@app.route('/test')
 def hello_world():
     return 'Hello World'
 
